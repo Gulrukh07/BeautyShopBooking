@@ -1,0 +1,14 @@
+[project]
+name = "onlinebooking"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2.7",
+    "django-ckeditor-5>=0.2.18",
+    "django-filter>=25.2",
+    "djangorestframework>=3.16.1",
+    "drf-spectacular[sidecar]>=0.28.0",
+    "flake8>=7.3.0",
+    "markdown>=3.9",
+]
