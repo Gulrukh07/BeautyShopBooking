@@ -3,30 +3,21 @@ import re
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db.models import ImageField, CASCADE, ForeignKey, JSONField
-from django.db.models import Model, Func
+from django.db.models import Model
 from django.db.models.enums import TextChoices
 from django.db.models.fields import CharField, BigIntegerField, BooleanField, TimeField, DateField, DecimalField
-from django.db.models.fields import DateTimeField, UUIDField
+from django.db.models.fields import DateTimeField
 from django_ckeditor_5.fields import CKEditor5Field
+from rest_framework.permissions import IsAuthenticated
+
+from apps.permissions import AdminPermission
 
 
-class GenRandomUUID(Func):
-    function = "gen_random_uuid"
-    template = "%(function)s()"  # no args
-    output_field = UUIDField()
-
-
-class UUIDBaseModel(Model):
-    id = UUIDField(primary_key=True, db_default=GenRandomUUID(), editable=False)
-
-    class Meta:
-        abstract = True
-        required_db_vendor = 'postgresql'
-
-
-class CreatedBaseModel(UUIDBaseModel):
+class CreatedBaseModel(Model):
     updated_at = DateTimeField(auto_now=True)
     created_at = DateTimeField(auto_now_add=True)
+
+    permission_classes = (IsAuthenticated, AdminPermission)
 
     class Meta:
         abstract = True
