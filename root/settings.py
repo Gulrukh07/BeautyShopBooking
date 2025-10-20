@@ -1,8 +1,10 @@
+import os
 from os.path import join
 from pathlib import Path
+from dotenv import load_dotenv
 
-from apps.models import users
 
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -23,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #MyApps
+    'apps',
     #DRF
     'rest_framework',
     'drf_spectacular',
@@ -30,7 +34,6 @@ INSTALLED_APPS = [
 
     # Third-party
     'django_ckeditor_5',
-    'nested_inline',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +47,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'root.urls'
-AUTH_USER_MODEL = users.User
+AUTH_USER_MODEL = 'apps.User'
 
 TEMPLATES = [
     {
@@ -68,22 +71,22 @@ WSGI_APPLICATION = 'root.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_NAME'),
-#         'HOST': os.getenv('POSTGRES_HOST'),
-#         'PORT': os.getenv('POSTGRES_PORT'),
-#         "USER": os.getenv('POSTGRES_USER'),
-#         "PASSWORD": os.getenv('POSTGRES_PASSWORD')
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_NAME'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
+        "USER": os.getenv('POSTGRES_USER'),
+        "PASSWORD": os.getenv('POSTGRES_PASSWORD')
+    }
+}
 
 
 # Password validation
