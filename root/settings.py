@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-ln404r5tn@e+s+^o6i5w7&(sn=vhfa&pgwzk5@kvcu97#i^tgu
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -142,7 +142,7 @@ REST_FRAMEWORK = {
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Beauty Saloon Booking',
+    'TITLE': ' Online Booking',
     'DESCRIPTION': 'description',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,

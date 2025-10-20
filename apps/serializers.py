@@ -3,7 +3,7 @@ import re
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import User
+from apps.models import User, Business, Appointment, Service, SubService
 
 
 class UserModelSerializer(ModelSerializer):
@@ -47,3 +47,31 @@ class UserModelSerializer(ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+class BusinessModelSerializer(ModelSerializer):
+    class Meta:
+        model = Business
+        fields = '__all__'
+        read_only_fields = 'id', 'created_at', 'updated_at'
+
+
+class AppointmentModelSerializer(ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
+        read_only_fields = 'id', 'created_at', 'updated_at'
+
+class ServiceModelSerializer(ModelSerializer):
+    class Meta:
+        model = Service
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['sub services'] = SubServiceModelSerializer(instance.sub_services, many=True).data
+        return data
+
+class SubServiceModelSerializer(ModelSerializer):
+    class Meta:
+        model = SubService
+        fields = '__all__'

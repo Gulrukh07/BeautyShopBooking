@@ -8,16 +8,12 @@ from django.db.models.enums import TextChoices
 from django.db.models.fields import CharField, BigIntegerField, BooleanField, TimeField, DateField, DecimalField
 from django.db.models.fields import DateTimeField
 from django_ckeditor_5.fields import CKEditor5Field
-from rest_framework.permissions import IsAuthenticated
-
-from apps.permissions import AdminPermission
 
 
 class CreatedBaseModel(Model):
     updated_at = DateTimeField(auto_now=True)
     created_at = DateTimeField(auto_now_add=True)
 
-    permission_classes = (IsAuthenticated, AdminPermission)
 
     class Meta:
         abstract = True
