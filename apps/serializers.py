@@ -1,7 +1,7 @@
 import re
 
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 
 from apps.models import User, Business, Appointment, Service, SubService, Notification
 
@@ -24,17 +24,17 @@ class UserModelSerializer(ModelSerializer):
             raise ValidationError('User with this phone number already exists.')
         return f"+{phone}"
 
-    # def validate_password(self, value):
-    #     if len(value) < 4:
-    #         raise ValidationError('Password must be at least 4 characters long.')
-    #     if len(value) > 20:
-    #         raise ValidationError('Password must be at most 20 characters long.')
-    #     if not re.search(r'\d', value):
-    #         raise ValidationError('Password must contain at least one digit.')
-    #     if not re.search(r'[A-Za-z]', value):
-    #         raise ValidationError('Password must contain at least one letter.')
-    #
-    #     return value
+    def validate_password(self, value):
+        if len(value) < 4:
+            raise ValidationError('Password must be at least 4 characters long.')
+        if len(value) > 20:
+            raise ValidationError('Password must be at most 20 characters long.')
+        if not re.search(r'\d', value):
+            raise ValidationError('Password must contain at least one digit.')
+        if not re.search(r'[A-Za-z]', value):
+            raise ValidationError('Password must contain at least one letter.')
+
+        return value
 
     def validate_avatar(self, value):
         if value and not value.name.lower().endswith(('.jpg', 'jpeg', 'png')):
@@ -56,6 +56,7 @@ class BusinessModelSerializer(ModelSerializer):
 
 
 class AppointmentModelSerializer(ModelSerializer):
+    specialist_name = CharField(source='specialist.first_name', read_only=True)
     class Meta:
         model = Appointment
         fields = '__all__'

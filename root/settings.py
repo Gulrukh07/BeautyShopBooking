@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from os.path import join
 from pathlib import Path
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ SECRET_KEY = 'django-insecure-ln404r5tn@e+s+^o6i5w7&(sn=vhfa&pgwzk5@kvcu97#i^tgu
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app', '.ngrok-free.dev']
 
 
 # Application definition
@@ -31,9 +32,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    'rest_framework_simplejwt',
 
     # Third-party
     'django_ckeditor_5',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -44,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'root.urls'
@@ -138,6 +142,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
 
@@ -242,3 +249,11 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=20),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
+
+CORS_ALLOW_ALL_ORIGINS = True
