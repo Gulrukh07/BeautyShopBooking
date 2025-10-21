@@ -3,7 +3,7 @@ import re
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer
 
-from apps.models import User, Business, Appointment, Service, SubService
+from apps.models import User, Business, Appointment, Service, SubService, Notification
 
 
 class UserModelSerializer(ModelSerializer):
@@ -74,4 +74,14 @@ class ServiceModelSerializer(ModelSerializer):
 class SubServiceModelSerializer(ModelSerializer):
     class Meta:
         model = SubService
+        fields = '__all__'
+
+class ReviewModelSerializer(ModelSerializer):
+    class Meta:
+        model = SubService
+        fields = '__all__'
+
+class NotificationModelSerializer(ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'
