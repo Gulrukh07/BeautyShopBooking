@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 from os.path import join
 from pathlib import Path
+
+import dj_database_url
 from dotenv import load_dotenv
 
 
@@ -83,13 +85,7 @@ WSGI_APPLICATION = 'root.wsgi.application'
 # }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_NAME'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': os.getenv('POSTGRES_PORT'),
-        "USER": os.getenv('POSTGRES_USER'),
-        "PASSWORD": os.getenv('POSTGRES_PASSWORD')
-    }
+        dj_database_url.config(default=os.getenv("DATABASE_URL"))    }
 }
 
 
