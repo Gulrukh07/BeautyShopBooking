@@ -2,11 +2,12 @@
 # exit on error
 set -o errexit
 
-# Install dependencies with uv
+# Install dependencies
 uv sync --frozen
 
 # Collect static files
 uv run python manage.py collectstatic --noinput
 
-# Run migrations
-uv run python manage.py migrate
+# Run database migrations automatically
+uv run python manage.py makemigrations --noinput || true
+uv run python manage.py migrate --noinput
