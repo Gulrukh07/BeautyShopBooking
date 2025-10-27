@@ -11,4 +11,4 @@ echo "Database ready — running migrations"
 uv run python manage.py migrate --noinput
 
 echo "Starting server..."
-uv run gunicorn myproject.wsgi:application
+uv run gunicorn root.wsgi:application
