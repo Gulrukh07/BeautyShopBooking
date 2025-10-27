@@ -79,4 +79,3 @@ dmypy.json
 .pytype/
 cython_debug/
 .db.sqlite3
-migration/
