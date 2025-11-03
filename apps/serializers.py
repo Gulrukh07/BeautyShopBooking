@@ -10,7 +10,7 @@ class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = 'first_name', 'last_name', 'phone_number', 'password', 'avatar', 'role'
-        read_only_fields = 'id', 'created_at', 'updated_at', 'date_joined'
+        read_only_fields = 'created_at', 'updated_at', 'date_joined'
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -52,7 +52,7 @@ class BusinessModelSerializer(ModelSerializer):
     class Meta:
         model = Business
         fields = '__all__'
-        read_only_fields = 'id', 'created_at', 'updated_at'
+        read_only_fields = 'created_at', 'updated_at'
 
 
 class AppointmentModelSerializer(ModelSerializer):
@@ -60,7 +60,7 @@ class AppointmentModelSerializer(ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
-        read_only_fields = 'id', 'created_at', 'updated_at'
+        read_only_fields = 'created_at', 'updated_at'
 
 class ServiceModelSerializer(ModelSerializer):
     class Meta:
