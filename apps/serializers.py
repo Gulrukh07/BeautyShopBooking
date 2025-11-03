@@ -9,7 +9,7 @@ from apps.models import User, Business, Appointment, Service, SubService, Notifi
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = 'first_name', 'last_name', 'phone_number', 'password', 'avatar', 'role'
+        fields = 'id', 'first_name', 'last_name', 'phone_number', 'password', 'avatar', 'role'
         read_only_fields = 'created_at', 'updated_at', 'date_joined'
 
     def validate_phone_number(self, value):
