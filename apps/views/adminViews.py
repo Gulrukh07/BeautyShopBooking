@@ -1,8 +1,8 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
 from apps.models import User, Business, Appointment, Service, SubService, Review, Notification
-from apps.permissions import IsAdminUser
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, SubServiceModelSerializer, NotificationModelSerializer, ReviewModelSerializer
 
@@ -14,10 +14,12 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
     # permission_classes = [IsAdminUser]
+    search_fields = ['first_name', 'last_name', 'phone_number']
 
 @extend_schema(tags=['Business'])
 class BusinessViewSet(ModelViewSet):
     queryset = Business.objects.all()
+    filter_backends = (SearchFilter,)
     serializer_class = BusinessModelSerializer
     # permission_classes = [IsAdminUser]
 
