@@ -46,7 +46,13 @@ class User(AbstractUser, CreatedBaseModel):
         ADMIN = 'admin', 'Admin'
         CLIENT = 'client', 'Client'
 
-    phone_number = CharField(max_length=15, unique=True)
+    phone_number = CharField(
+        max_length=15,
+        unique=True,
+        error_messages={
+            'unique': 'User with this phone number already exists.',
+        }
+    )
     role = CharField(max_length=50, choices=RoleType.choices)
     avatar = ImageField(upload_to='users/%Y/%m/%d', null=True, blank=True)
 

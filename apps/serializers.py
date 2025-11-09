@@ -9,7 +9,7 @@ from apps.models import User, Business, Appointment, Service, SubService, Notifi
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields  = '__all__'
+        fields  = 'id', 'first_name', 'last_name', 'phone_number', 'role','avatar','created_at'
         read_only_fields = 'created_at', 'updated_at', 'date_joined'
 
     def validate_phone_number(self, value):
@@ -47,6 +47,17 @@ class UserModelSerializer(ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
 
 class BusinessModelSerializer(ModelSerializer):
     class Meta:
@@ -61,6 +72,12 @@ class AppointmentModelSerializer(ModelSerializer):
         model = Appointment
         fields = '__all__'
         read_only_fields = 'created_at', 'updated_at'
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['specialist'] = UserModelSerializer(instance.specialist_id).data if instance.specialist_id else None
+        data['client'] = UserModelSerializer(instance.client_id).data if instance.client_id else None
+        data['service'] = ServiceModelSerializer(instance.service_id).data if instance.service_id else None
+        return data
 
 class ServiceModelSerializer(ModelSerializer):
     class Meta:
