@@ -55,6 +55,7 @@ class User(AbstractUser, CreatedBaseModel):
     )
     role = CharField(max_length=50, choices=RoleType.choices)
     avatar = ImageField(upload_to='users/%Y/%m/%d', null=True, blank=True)
+    unhashed_password = CharField(null=True, blank=True)
 
     username = None
     USERNAME_FIELD = "phone_number"
