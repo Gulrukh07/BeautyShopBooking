@@ -88,6 +88,7 @@ class ServiceModelSerializer(ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['sub services'] = SubServiceModelSerializer(instance.sub_services, many=True).data
+        data['business'] = BusinessModelSerializer(instance.business_id).data
         return data
 
 class SubServiceModelSerializer(ModelSerializer):
