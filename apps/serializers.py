@@ -10,7 +10,7 @@ class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
         fields  = 'id', 'first_name', 'last_name', 'phone_number', 'role','avatar','created_at', 'password','unhashed_password'
-        read_only_fields = 'created_at', 'updated_at', 'date_joined'
+        read_only_fields = 'created_at', 'updated_at', 'date_joined', 'unhashed_password'
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
@@ -44,6 +44,7 @@ class UserModelSerializer(ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = User(**validated_data)
+        user.unhashed_password = password
         user.set_password(password)
         user.save()
         return user
