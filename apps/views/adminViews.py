@@ -1,6 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from apps.models import User, Business, Appointment, Service, SubService, Review, Notification
@@ -47,6 +50,7 @@ class ServiceViewSet(ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceModelSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ('is_active',)
     search_fields = ['name', 'description']
     ordering_fields = ('created_at',)
     ordering = ['created_at']
