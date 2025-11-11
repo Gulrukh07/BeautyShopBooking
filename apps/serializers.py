@@ -1,7 +1,7 @@
 import re
 
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField,IntegerField
 
 from apps.models import User, Business, Appointment, Service, SubService, Notification
 
@@ -105,3 +105,21 @@ class NotificationModelSerializer(ModelSerializer):
     class Meta:
         model = Notification
         fields = '__all__'
+
+class AppointmentStatsSerializer(Serializer):
+    start = DateField(required=True)
+    end = DateField(required=False)
+
+    def validate(self, data):
+        start = data.get('start')
+        end = data.get('end')
+
+        if end and end < start:
+            raise ValidationError('End date must be greater than or equal to start date.')
+
+        return data
+
+class TopServicesSerializer(Serializer):
+    service_id = IntegerField()
+    service_name = CharField()
+    total = IntegerField()

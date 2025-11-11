@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.views.adminViews import AppointmentViewSet, ServiceViewSet, SubServiceViewSet, UserViewSet, BusinessViewSet, \
-    NotificationViewSet, ReviewViewSet
+    NotificationViewSet, ReviewViewSet, AppointmentStatisticView, TopServicesView
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
@@ -15,4 +15,6 @@ router.register('reviews', ReviewViewSet)
 
 urlpatterns = [
     path('admin/', include(router.urls)),
+    path('statistics/', AppointmentStatisticView.as_view()),
+    path('top-services/', TopServicesView.as_view()),
 ]
