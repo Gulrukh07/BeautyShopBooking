@@ -97,40 +97,38 @@ class AppointmentStatisticView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        start = data['start']
-        end = data['end'] if 'end' in data else None
-        if start and not end:
-            appointments = Appointment.objects.filter(created_at__date=start)
+        start = data.get('start')
+        end = data.get('end')
 
-            statistics = (
-                appointments
-                .annotate(day=TruncDate('created_at'))
-                .values('day')
-                .annotate(total=Count('id'))
-                .order_by('day')
-            )
+        appointments = Appointment.objects.all()
+        if end:
+            appointments = appointments.filter(created_at__gte=start, created_at__lte=end)
+        else:
+            appointments = appointments.filter(created_at__date=start)
 
-            return Response({
-                'start': start,
-                'statistics': statistics
-            })
+        statistics = (
+            appointments
+            .values('service_id', 'service_id__name')
+            .annotate(total=Count('id'))
+        )
 
-        if start and end:
-            total_appointments = Appointment.objects.filter(
-                created_at__date__gte=start,
-                created_at__date__lte=end
-            ).count()
-
-            return Response({
-                'start': start,
-                'end': end,
-                'total': total_appointments
-            })
+        results = [
+            {
+                'service_id': stat['service_id'],
+                'service_name': stat['service_id__name'],
+                'total_appointments': stat['total']
+            }
+            for stat in statistics
+        ]
 
         return Response(
-            {'error': 'Invalid input'},
-            status=status.HTTP_400_BAD_REQUEST)
-
+            {
+                'start': start,
+                'end': end,
+                'statistics': results
+            },
+            status=status.HTTP_200_OK
+        )
 @extend_schema(tags=['Statistics'],
                responses={200: TopServicesSerializer(many=True)})
 class TopServicesView(APIView):
