@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
@@ -89,26 +91,32 @@ class NotificationViewSet(ModelViewSet):
     search_fields = ['message', 'user_first_name', 'user_last_name', 'type']
     # permission_classes = [IsAdminUser]
 
-@extend_schema(tags=['Statistics'], request=AppointmentStatsSerializer)
+@extend_schema(tags=['Statistics'], )
 class AppointmentStatisticView(APIView):
-    def post(self, request):
-        serializer = AppointmentStatsSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
+    def get(self, request):
+        start_str = request.query_params.get('start')
+        end_str = request.query_params.get('end')
 
-        start = data.get('start')
-        end = data.get('end')
+        if not start_str:
+            return Response({'error': 'Start date is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        appointments = Appointment.objects.all()
-        if end:
-            appointments = appointments.filter(created_at__gte=start, created_at__lte=end)
-        else:
-            appointments = appointments.filter(created_at__date=start)
+        try:
+            start = datetime.strptime(start_str, "%Y-%m-%d")
+            if end_str:
+                end = datetime.strptime(end_str, "%Y-%m-%d") + timedelta(days=1) - timedelta(microseconds=1)
+            else:
+                end = start + timedelta(days=1) - timedelta(microseconds=1)
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        appointments = Appointment.objects.filter(created_at__gte=start, created_at__lte=end)
 
         statistics = (
             appointments
             .values('service_id', 'service_id__name')
             .annotate(total=Count('id'))
+            .order_by('-total')
         )
 
         results = [
@@ -120,16 +128,17 @@ class AppointmentStatisticView(APIView):
             for stat in statistics
         ]
 
-        return Response(
+        return (Response(
             {
-                'start': start,
-                'end': end,
+                'start': start_str,
+                'end': end_str,
                 'statistics': results
             },
             status=status.HTTP_200_OK
-        )
+        ))
 @extend_schema(tags=['Statistics'],
                responses={200: TopServicesSerializer(many=True)})
+
 class TopServicesView(APIView):
 
     def get(self, request):
