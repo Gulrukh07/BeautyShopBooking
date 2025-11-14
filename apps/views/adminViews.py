@@ -5,6 +5,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -12,7 +14,7 @@ from rest_framework.viewsets import ModelViewSet
 from apps.models import User, Business, Appointment, Service, SubService, Review, Notification
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, SubServiceModelSerializer, NotificationModelSerializer, ReviewModelSerializer, \
-    AppointmentStatsSerializer, TopServicesSerializer
+    TopServicesSerializer, AppointmentStatsSerializer
 
 
 # Create your views here.
@@ -91,7 +93,7 @@ class NotificationViewSet(ModelViewSet):
     search_fields = ['message', 'user_first_name', 'user_last_name', 'type']
     # permission_classes = [IsAdminUser]
 
-@extend_schema(tags=['Statistics'], )
+@extend_schema(tags=['Statistics'], responses=AppointmentStatsSerializer)
 class AppointmentStatisticView(APIView):
     def get(self, request):
         start_str = request.query_params.get('start')
@@ -138,7 +140,6 @@ class AppointmentStatisticView(APIView):
         ))
 @extend_schema(tags=['Statistics'],
                responses={200: TopServicesSerializer(many=True)})
-
 class TopServicesView(APIView):
 
     def get(self, request):
@@ -150,3 +151,11 @@ class TopServicesView(APIView):
         )
 
         return Response(top_services)
+
+@extend_schema(tags=["Users",], responses={200: UserModelSerializer})
+class GetMe(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+        user = request.user
+        serializer = UserModelSerializer(user)
+        return Response(serializer.data)
