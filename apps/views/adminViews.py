@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,7 +32,7 @@ class UserViewSet(ModelViewSet):
 @extend_schema(tags=['Business'])
 class BusinessViewSet(ModelViewSet):
     queryset = Business.objects.all()
-    filter_backends = (DjangoFilterBackend,SearchFilter, OrderingFilter)
+    filter_backends = (DjangoFilterBackend,SearchFilter, OrderingFilter )
     serializer_class = BusinessModelSerializer
     filterset_fields = ('type',)
     search_fields = ['name', 'description', 'type']
@@ -86,7 +85,7 @@ class ReviewViewSet(ModelViewSet):
 class NotificationViewSet(ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationModelSerializer
-    filter_backends = (DjangoFilterBackend, SearchFilter,OrderingFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter,OrderingFilter )
     ordering_fields = ('created_at',)
     ordering = ['created_at']
     filterset_fields = ('type',)
@@ -110,7 +109,6 @@ class AppointmentStatisticView(APIView):
                 end = start + timedelta(days=1) - timedelta(microseconds=1)
         except ValueError:
             return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
-
 
         appointments = Appointment.objects.filter(created_at__gte=start, created_at__lte=end)
 

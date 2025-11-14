@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import ImageField, CASCADE, ForeignKey, JSONField
 from django.db.models import Model
 from django.db.models.enums import TextChoices
-from django.db.models.fields import CharField, BigIntegerField, BooleanField, TimeField, DateField, DecimalField
+from django.db.models.fields import (CharField, BigIntegerField, BooleanField,
+                                     TimeField, DateField, DecimalField)
 from django.db.models.fields import DateTimeField
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -13,7 +14,6 @@ from django_ckeditor_5.fields import CKEditor5Field
 class CreatedBaseModel(Model):
     updated_at = DateTimeField(auto_now=True)
     created_at = DateTimeField(auto_now_add=True)
-
 
     class Meta:
         abstract = True
@@ -176,7 +176,6 @@ class Notification(CreatedBaseModel):
         BOOKING = 'booking', 'Booking'
         REMINDER = 'reminder', 'Reminder'
         CANCELLED = 'cancelled', 'Cancelled'
-
 
     user_id = ForeignKey(User, related_name='notifications', on_delete=CASCADE)
     message = CKEditor5Field()

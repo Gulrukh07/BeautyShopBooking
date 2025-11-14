@@ -1,7 +1,7 @@
 import re
 
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField,IntegerField
+from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField, IntegerField
 
 from apps.models import User, Business, Appointment, Service, SubService, Notification
 
@@ -9,17 +9,18 @@ from apps.models import User, Business, Appointment, Service, SubService, Notifi
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields  = 'id', 'first_name', 'last_name', 'phone_number', 'role','avatar','created_at', 'password','unhashed_password'
+        fields  = ('id', 'first_name', 'last_name', 'phone_number', 'role', 'avatar',
+                   'created_at', 'password', 'unhashed_password')
         read_only_fields = 'created_at', 'updated_at', 'date_joined', 'unhashed_password'
 
     def validate_phone_number(self, value):
         phone = re.sub('\D', '', value)
         pattern = r'^998(90|91|93|94|95|97|98|99|33|88|50|77)\d{7}$'
 
-        if not re.match(pattern, phone):
+        if not re.match(pattern, phone ):
             raise ValidationError ('Phone number must be in this format: +998XXXXXXXXX')
 
-        queryset = User.objects.filter(phone_number=phone)
+        queryset = User.objects.filter(phone_number=phone )
         if queryset.exists():
             raise ValidationError('User with this phone number already exists.')
         return f"+{phone}"
@@ -48,6 +49,7 @@ class UserModelSerializer(ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
 
@@ -59,6 +61,7 @@ class UserModelSerializer(ModelSerializer):
 
         instance.save()
         return instance
+
 
 class BusinessModelSerializer(ModelSerializer):
     class Meta:
