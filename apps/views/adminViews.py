@@ -9,11 +9,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.models import User, Business, Appointment, Service, SubService, Review, Notification
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, SubServiceModelSerializer, NotificationModelSerializer, ReviewModelSerializer, \
-    TopServicesSerializer, AppointmentStatsSerializer
+    TopServicesSerializer, AppointmentStatsSerializer, CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 
 
 # Create your views here.
@@ -157,3 +159,9 @@ class GetMe(APIView):
         user = request.user
         serializer = UserModelSerializer(user)
         return Response(serializer.data)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+# class CustomTokenRefreshView(TokenRefreshView):
+#     serializer_class = CustomTokenRefreshSerializer

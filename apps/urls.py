@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, SubServiceViewSet, UserViewSet,
                                    BusinessViewSet, NotificationViewSet, ReviewViewSet, AppointmentStatisticView,
-                                   TopServicesView, GetMe)
+                                   TopServicesView, GetMe, CustomTokenObtainPairView, CustomTokenRefreshView)
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
@@ -19,4 +19,7 @@ urlpatterns = [
     path('statistics/', AppointmentStatisticView.as_view()),
     path('top-services/', TopServicesView.as_view()),
     path('get-me/', GetMe.as_view()),
+    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('token/refresh/', CustomTokenRefreshView.as_view()),
+
 ]

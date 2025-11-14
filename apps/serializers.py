@@ -1,7 +1,9 @@
 import re
 
+from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField, IntegerField
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 from apps.models import User, Business, Appointment, Service, SubService, Notification
 
@@ -126,3 +128,24 @@ class TopServicesSerializer(Serializer):
     service_id = IntegerField()
     service_name = CharField()
     total = IntegerField()
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        return {"status_code": status.HTTP_200_OK, "data": data,
+                "message": "Successfully authenticated",
+                # "access_token": data["access"],
+                # "refresh_token": data["refresh"],
+                }
+
+# class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+#     def validate(self, attrs):
+#         data = super().validate(attrs)
+#
+#         return {
+#             "status_code": status.HTTP_200_OK,
+#             "message": "Token refreshed successfully",
+#             # "access": data.get("access"),
+#             # "refresh": attrs.get("refresh")
+#         }
