@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, SubServiceViewSet, UserViewSet,
                                    BusinessViewSet, NotificationViewSet, ReviewViewSet, AppointmentStatisticView,
-                                   TopServicesView, GetMe, CustomTokenObtainPairView, CustomTokenRefreshView)
+                                   TopServicesView, GetMe, CustomTokenObtainPairView, )
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
