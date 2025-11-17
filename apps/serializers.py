@@ -135,8 +135,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return {"status_code": status.HTTP_200_OK, "data": data,
                 "message": "Successfully authenticated",
-                # "access_token": data["access"],
-                # "refresh_token": data["refresh"],
                 }
 
 # class CustomTokenRefreshSerializer(TokenRefreshSerializer):

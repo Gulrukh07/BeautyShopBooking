@@ -12,6 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.models import User, Business, Appointment, Service, SubService, Review, Notification
+from apps.permissions import IsAdminUser
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, SubServiceModelSerializer, NotificationModelSerializer, ReviewModelSerializer, \
     TopServicesSerializer, AppointmentStatsSerializer, CustomTokenObtainPairSerializer
@@ -28,7 +29,7 @@ class UserViewSet(ModelViewSet):
     search_fields = ['first_name', 'last_name', 'phone_number']
     ordering_fields = ('created_at',)
     ordering = ['created_at']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Business'])
 class BusinessViewSet(ModelViewSet):
@@ -39,7 +40,7 @@ class BusinessViewSet(ModelViewSet):
     search_fields = ['name', 'description', 'type']
     ordering_fields = ('created_at',)
     ordering = ['created_at']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Appointments'])
 class AppointmentViewSet(ModelViewSet):
@@ -49,7 +50,7 @@ class AppointmentViewSet(ModelViewSet):
     filterset_fields = ('status',)
     ordering_fields = ('created_at',)
     ordering = ['created_at']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Services'])
 class ServiceViewSet(ModelViewSet):
@@ -60,7 +61,7 @@ class ServiceViewSet(ModelViewSet):
     search_fields = ['name', 'description']
     ordering_fields = ('created_at',)
     ordering = ['created_at']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['SubServices'])
 class SubServiceViewSet(ModelViewSet):
@@ -70,7 +71,7 @@ class SubServiceViewSet(ModelViewSet):
     ordering_fields = ('created_at',)
     search_fields = ['name', 'description']
     ordering = ['created_at']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Reviews'])
 class ReviewViewSet(ModelViewSet):
@@ -80,7 +81,7 @@ class ReviewViewSet(ModelViewSet):
     ordering_fields = ('created_at',)
     ordering = ['created_at']
     search_fields = ['comment', 'client_first_name', 'client_last_name']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Notifications'])
 class NotificationViewSet(ModelViewSet):
@@ -91,7 +92,7 @@ class NotificationViewSet(ModelViewSet):
     ordering = ['created_at']
     filterset_fields = ('type',)
     search_fields = ['message', 'user_first_name', 'user_last_name', 'type']
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 @extend_schema(tags=['Statistics'], responses=AppointmentStatsSerializer)
 class AppointmentStatisticView(APIView):
