@@ -1,18 +1,16 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, SubServiceViewSet, UserViewSet,
-                                   BusinessViewSet, NotificationViewSet, ReviewViewSet, AppointmentStatisticView,
-                                   TopServicesView, GetMe, CustomTokenObtainPairView, )
+from apps.models import BusinessWorker
+from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, UserViewSet,
+                                   BusinessViewSet, AppointmentStatisticView,
+                                   TopServicesView, GetMe, CustomTokenObtainPairView, BusinessWorkerlistView, )
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
 router.register('business', BusinessViewSet)
 router.register('appointments', AppointmentViewSet),
 router.register('services', ServiceViewSet),
-router.register('subservices', SubServiceViewSet)
-router.register('notifications', NotificationViewSet)
-router.register('reviews', ReviewViewSet)
 
 urlpatterns = [
     path('admin/', include(router.urls)),
@@ -20,6 +18,7 @@ urlpatterns = [
     path('top-services/', TopServicesView.as_view()),
     path('get-me/', GetMe.as_view()),
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('business-workers/', BusinessWorkerlistView.as_view()),
     # path('token/refresh/', CustomTokenRefreshView.as_view()),
 
 ]

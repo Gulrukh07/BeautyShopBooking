@@ -3,9 +3,9 @@ import re
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField, IntegerField
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from apps.models import User, Business, Appointment, Service, SubService, Notification
+from apps.models import User, Business, Appointment, Service, SubService, BusinessWorker
 
 
 class UserModelSerializer(ModelSerializer):
@@ -64,13 +64,23 @@ class UserModelSerializer(ModelSerializer):
         instance.save()
         return instance
 
-
 class BusinessModelSerializer(ModelSerializer):
     class Meta:
         model = Business
         fields = '__all__'
         read_only_fields = 'created_at', 'updated_at'
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['services'] = ServiceModelSerializer(instance.services.all(),many=True).data
+        return data
+
+class BusinessWorkerSerializer(ModelSerializer):
+    specialist_id = IntegerField(read_only=True)
+    class Meta:
+        model = BusinessWorker
+        fields = '__all__'
+        read_only_fields = 'created_at', 'updated_at'
 
 class AppointmentModelSerializer(ModelSerializer):
     specialist_name = CharField(source='specialist.first_name', read_only=True)
@@ -86,29 +96,20 @@ class AppointmentModelSerializer(ModelSerializer):
         return data
 
 class ServiceModelSerializer(ModelSerializer):
+    business_title = CharField(source='business_id.name', read_only=True)
+
     class Meta:
-        model = Service
-        fields = '__all__'
+            model = Service
+            fields = '__all__'
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['sub services'] = SubServiceModelSerializer(instance.sub_services, many=True).data
-        data['business'] = BusinessModelSerializer(instance.business_id).data
         return data
 
 class SubServiceModelSerializer(ModelSerializer):
     class Meta:
         model = SubService
-        fields = '__all__'
-
-class ReviewModelSerializer(ModelSerializer):
-    class Meta:
-        model = SubService
-        fields = '__all__'
-
-class NotificationModelSerializer(ModelSerializer):
-    class Meta:
-        model = Notification
         fields = '__all__'
 
 class AppointmentStatsSerializer(Serializer):

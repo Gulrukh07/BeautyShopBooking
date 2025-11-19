@@ -75,7 +75,6 @@ class User(AbstractUser, CreatedBaseModel):
             self.phone = self.check_phone()
         super().full_clean(exclude, validate_unique, validate_constraints)
 
-
 class Business(CreatedBaseModel):
     class Type(TextChoices):
         CLINIC = 'clinic', 'Clinic'
@@ -91,10 +90,10 @@ class Business(CreatedBaseModel):
     longitude = DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     contact = CharField(max_length=255, blank=True, null=True)
     opening_hours = JSONField(blank=True, null=True)
+    is_active = BooleanField(default=False)
 
     def __str__(self):
         return self.name
-
 
 class Service(CreatedBaseModel):
     name = CharField(max_length=255)
@@ -104,7 +103,6 @@ class Service(CreatedBaseModel):
 
     def __str__(self):
         return self.name
-
 
 class SubService(CreatedBaseModel):
     name = CharField(max_length=255)
