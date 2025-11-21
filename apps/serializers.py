@@ -2,7 +2,8 @@ import re
 
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import ModelSerializer, CharField, Serializer, DateField, IntegerField
+from rest_framework.serializers import (ModelSerializer, CharField, Serializer,
+                                        DateField, IntegerField, SerializerMethodField)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from apps.models import User, Business, Appointment, Service, SubService, BusinessWorker
@@ -75,32 +76,60 @@ class BusinessModelSerializer(ModelSerializer):
         data['services'] = ServiceModelSerializer(instance.services.all(),many=True).data
         return data
 
+class SpecialistModelSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "first_name", "last_name", "phone_number", "avatar"]
+
 class BusinessWorkerSerializer(ModelSerializer):
-    specialist_id = IntegerField(read_only=True)
+    specialist = SpecialistModelSerializer(source='specialist_id', read_only=True)
+
     class Meta:
         model = BusinessWorker
-        fields = '__all__'
-        read_only_fields = 'created_at', 'updated_at'
+        fields = ["id", "specialist", "position", "bio", "years_of_experience"]
+        read_only_fields = ['created_at', 'updated_at']
 
 class AppointmentModelSerializer(ModelSerializer):
-    specialist_name = CharField(source='specialist.first_name', read_only=True)
+    specialist_name = SerializerMethodField()
+    client_name = SerializerMethodField()
+    service_name = SerializerMethodField()
+
     class Meta:
         model = Appointment
-        fields = '__all__'
-        read_only_fields = 'created_at', 'updated_at'
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['specialist'] = UserModelSerializer(instance.specialist_id).data if instance.specialist_id else None
-        data['client'] = UserModelSerializer(instance.client_id).data if instance.client_id else None
-        data['service'] = ServiceModelSerializer(instance.service_id).data if instance.service_id else None
-        return data
+        fields = [
+            'id', 'created_at', 'updated_at', 'status',
+            'specialist_id', 'client_id', 'service_id',
+            'specialist_name', 'client_name', 'service_name'
+        ]
+        read_only_fields = ('created_at', 'updated_at')
+
+    def get_specialist_name(self, obj):
+        if obj.specialist_id:
+            return f"{obj.specialist_id.first_name} {obj.specialist_id.last_name}"
+        return None
+
+    def get_client_name(self, obj):
+        if obj.client_id:
+            return f"{obj.client_id.first_name} {obj.client_id.last_name}"
+        return None
+
+    def get_service_name(self, obj):
+        if obj.service_id:
+            return obj.service_id.name
+        return None
 
 class ServiceModelSerializer(ModelSerializer):
     business_title = CharField(source='business_id.name', read_only=True)
+    specialists = SerializerMethodField()
 
     class Meta:
             model = Service
             fields = '__all__'
+
+    def get_specialists(self, obj):
+        specialists = BusinessWorker.objects.filter(service_id_id = obj, is_active = True,
+                                                    specialist_id__role = User.RoleType.SPECIALIST)
+        return BusinessWorkerSerializer(specialists, many=True).data
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
