@@ -41,11 +41,11 @@ class BusinessViewSet(ModelViewSet):
     ordering = ['created_at']
     # permission_classes = [IsAdminUser]
 
-@extend_schema(tags=['Business'])
-class BusinessWorkerlistView(ListAPIView):
-    queryset = BusinessWorker.objects.all()
-    serializer_class = BusinessModelSerializer
-
+# @extend_schema(tags=['Business'])
+# class BusinessWorkerlistView(ListAPIView):
+#     queryset = BusinessWorker.objects.all()
+#     serializer_class = BusinessModelSerializer
+#
 
 @extend_schema(tags=['Appointments'])
 class AppointmentViewSet(ModelViewSet):
