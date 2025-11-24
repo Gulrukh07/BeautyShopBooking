@@ -3,13 +3,14 @@ from rest_framework.routers import DefaultRouter
 
 from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, UserViewSet,
                                    BusinessViewSet, AppointmentStatisticView,
-                                   TopServicesView, GetMe, CustomTokenObtainPairView, )
+                                   TopServicesView, GetMe, CustomTokenObtainPairView, BusinessWorkerViewSet, )
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
 router.register('business', BusinessViewSet)
 router.register('appointments', AppointmentViewSet),
 router.register('services', ServiceViewSet),
+router.register('business-workers', BusinessWorkerViewSet),
 
 urlpatterns = [
     path('admin/', include(router.urls)),

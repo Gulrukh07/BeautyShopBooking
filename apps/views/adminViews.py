@@ -11,9 +11,10 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from apps.models import User, Business, Appointment, Service
+from apps.models import User, Business, Appointment, Service, BusinessWorker
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
-    ServiceModelSerializer, TopServicesSerializer, AppointmentStatsSerializer, CustomTokenObtainPairSerializer
+    ServiceModelSerializer, TopServicesSerializer, AppointmentStatsSerializer, CustomTokenObtainPairSerializer, \
+    BusinessWorkerModelSerializer
 
 
 # Create your views here.
@@ -40,11 +41,10 @@ class BusinessViewSet(ModelViewSet):
     ordering = ['created_at']
     # permission_classes = [IsAdminUser]
 
-# @extend_schema(tags=['Business'])
-# class BusinessWorkerlistView(ListAPIView):
-#     queryset = BusinessWorker.objects.all()
-#     serializer_class = BusinessModelSerializer
-#
+@extend_schema(tags=['BusinessWorkers'])
+class BusinessWorkerViewSet(ModelViewSet):
+    queryset = BusinessWorker.objects.all()
+    serializer_class = BusinessWorkerModelSerializer
 
 @extend_schema(tags=['Appointments'])
 class AppointmentViewSet(ModelViewSet):

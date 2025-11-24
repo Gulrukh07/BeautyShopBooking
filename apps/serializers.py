@@ -166,6 +166,18 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return {"status_code": status.HTTP_200_OK, "data": data,
                 "message": "Successfully authenticated",
                 }
+class BusinessWorkerModelSerializer(ModelSerializer):
+    class Meta:
+        model = BusinessWorker
+        fields = '__all__'
+        read_only_fields = 'created_at', 'updated_at'
+
+    def validate_specialist_id(self, specialist_id):
+        if specialist_id is None:
+            raise ValidationError('Specialist_id is required')
+        if specialist_id.role != User.RoleType.SPECIALIST:
+            raise ValidationError('Specialist with given id is not found')
+        return specialist_id
 
 # class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 #     def validate(self, attrs):
