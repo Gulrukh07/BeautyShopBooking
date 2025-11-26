@@ -121,6 +121,7 @@ class AppointmentModelSerializer(ModelSerializer):
 class ServiceModelSerializer(ModelSerializer):
     business_title = CharField(source='business_id.name', read_only=True)
     specialists = SerializerMethodField()
+    appointments = SerializerMethodField()
 
     class Meta:
             model = Service
@@ -130,6 +131,9 @@ class ServiceModelSerializer(ModelSerializer):
         specialists = BusinessWorker.objects.filter(service_id_id = obj, is_active = True,
                                                     specialist_id__role = User.RoleType.SPECIALIST)
         return BusinessWorkerSerializer(specialists, many=True).data
+    def get_appointments(self, obj):
+        appointments = Appointment.objects.filter(service_id_id = obj)
+        return AppointmentModelSerializer(appointments, many=True).data
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
