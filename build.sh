@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-# exit on error
 set -o errexit
 
 # Install dependencies
 uv sync --frozen
 
-# Collect static files
+# Collect static assets
 uv run python manage.py collectstatic --noinput
 
-# Run database migrations automatically
-uv run python manage.py makemigrations --noinput || true
+# Apply migrations (do NOT create them here)
 uv run python manage.py migrate --noinput
