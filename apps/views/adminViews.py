@@ -14,7 +14,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.models import User, Business, Appointment, Service, BusinessWorker
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, TopServicesSerializer, AppointmentStatsSerializer, CustomTokenObtainPairSerializer, \
-    BusinessWorkerModelSerializer, TopClientSerializer
+    BusinessWorkerModelSerializer, TopClientSerializer, TopSpecialistSerializer
 
 
 # Create your views here.
@@ -160,6 +160,30 @@ class TopClientsView(APIView):
                 'total_appointments': client['total_appointments']
             }
             for client in top_clients
+        ]
+
+        return Response(results)
+@extend_schema(
+    tags=["Statistics"],
+    responses={200: TopSpecialistSerializer(many=True)}
+)
+class TopSpecialistView(APIView):
+
+    def get(self, request):
+        top_specialists = (
+            Appointment.objects
+            .values('specialist_id', 'specialist_id__first_name' , 'specialist_id__last_name')
+            .annotate(total_appointments=Count('id'))
+            .order_by('-total_appointments')[:10]
+        )
+
+        results = [
+            {
+                'specialist_id': specialist['specialist_id'],
+                "specialist_name": f"{specialist['specialist_id__first_name']} {specialist['specialist_id__last_name']}".strip(),
+                'total_appointments': specialist['total_appointments']
+            }
+            for specialist in top_specialists
         ]
 
         return Response(results)

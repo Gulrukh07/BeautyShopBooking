@@ -199,3 +199,8 @@ class TopClientSerializer(Serializer):
     client_id = IntegerField()
     client_name = CharField()
     total_appointments = IntegerField()
+
+class TopSpecialistSerializer(Serializer):
+    specialist_id = IntegerField()
+    specialist_name = CharField()
+    total_appointments = IntegerField()
