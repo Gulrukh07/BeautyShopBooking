@@ -150,7 +150,7 @@ class TopClientsView(APIView):
             Appointment.objects
             .values('client_id', 'client_id__first_name' , 'client_id__last_name')
             .annotate(total_appointments=Count('id'))
-            .order_by('-total_appointments')
+            .order_by('-total_appointments')[:10]
         )
 
         results = [
