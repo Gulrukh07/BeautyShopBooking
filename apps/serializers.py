@@ -193,3 +193,9 @@ class BusinessWorkerModelSerializer(ModelSerializer):
 #             # "access": data.get("access"),
 #             # "refresh": attrs.get("refresh")
 #         }
+
+
+class TopClientSerializer(Serializer):
+    client_id = IntegerField()
+    client_name = CharField()
+    total_appointments = IntegerField()
