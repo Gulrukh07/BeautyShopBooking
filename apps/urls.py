@@ -2,9 +2,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, UserViewSet,
-                                   BusinessViewSet, AppointmentStatisticView,
-                                   TopServicesView, GetMe, CustomTokenObtainPairView, BusinessWorkerViewSet,
-                                   TopSpecialistView, TopClientsView, )
+                                   BusinessViewSet,
+                                   GetMe, CustomTokenObtainPairView, BusinessWorkerViewSet )
+from apps.views.statisticviews import AppointmentStatisticView, TopServicesView, TopClientsView, TopBusinessesView, \
+    TopSpecialistView
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
@@ -18,6 +19,7 @@ urlpatterns = [
     path('statistics/', AppointmentStatisticView.as_view()),
     path('top-services/', TopServicesView.as_view()),
     path('top-clients/', TopClientsView.as_view()),
+    path('top-businesses/', TopBusinessesView.as_view()),
     path('top-specialists/', TopSpecialistView.as_view()),
     path('get-me/', GetMe.as_view()),
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
