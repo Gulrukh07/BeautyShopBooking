@@ -103,6 +103,7 @@ class TopSpecialistView(APIView):
     def get(self, request):
         top_specialists = (
             Appointment.objects
+            .filter(status=Appointment.Status.APPROVED)
             .values('specialist_id', 'specialist_id__first_name' , 'specialist_id__last_name')
             .annotate(total_appointments=Count('id'))
             .order_by('-total_appointments')[:10]
@@ -111,7 +112,8 @@ class TopSpecialistView(APIView):
         results = [
             {
                 'specialist_id': specialist['specialist_id'],
-                "specialist_name": f"{specialist['specialist_id__first_name']} {specialist['specialist_id__last_name']}".strip(),
+                "specialist_name": f"{specialist['specialist_id__first_name']} {specialist['specialist_id__last_name']}"
+                .strip(),
                 'total_appointments': specialist['total_appointments']
             }
             for specialist in top_specialists
@@ -125,6 +127,7 @@ class TopBusinessesView(APIView):
     def get(self, request):
         top_businesses = (
             Appointment.objects
+            .filter(status__in=[Appointment.Status.APPROVED, Appointment.Status.MOVED])
             .values('service_id__business_id', 'service_id__business_id__name')
             .annotate(total_appointments=Count('id'))
             .order_by('-total_appointments')[:10]
