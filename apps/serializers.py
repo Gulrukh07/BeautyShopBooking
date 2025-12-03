@@ -197,8 +197,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserUpdateSerializer(ModelSerializer):
-    new_password = CharField(write_only=True, required=False)
-    confirm_password = CharField(write_only=True, required=False)
+    # new_password = CharField(write_only=True, required=False)
+    # confirm_password = CharField(write_only=True, required=False)
 
     class Meta:
         model = User
@@ -207,8 +207,8 @@ class UserUpdateSerializer(ModelSerializer):
             "last_name",
             "avatar",
             "phone_number",
-            "new_password",
-            "confirm_password",
+            # "new_password",
+            # "confirm_password",
         ]
 
     def validate_phone_number(self, value):
@@ -217,18 +217,18 @@ class UserUpdateSerializer(ModelSerializer):
             raise ValidationError("Phone number must be a valid Uzbekistan number.")
         return value
 
-    def validate(self, attrs):
-
-        new_password = attrs.get("new_password")
-        confirm_password = attrs.get("confirm_password")
-
-        if new_password or confirm_password:
-            if new_password != confirm_password:
-                raise ValidationError({"password": "Passwords do not match."})
-
-            # validate_password(new_password)
-
-        return attrs
+    # def validate(self, attrs):
+    #
+    #     new_password = attrs.get("new_password")
+    #     confirm_password = attrs.get("confirm_password")
+    #
+    #     if new_password or confirm_password:
+    #         if new_password != confirm_password:
+    #             raise ValidationError({"password": "Passwords do not match."})
+    #
+    #         # validate_password(new_password)
+    #
+    #     return attrs
 
     def update(self, instance, validated_data):
         new_password = validated_data.pop("new_password", None)
