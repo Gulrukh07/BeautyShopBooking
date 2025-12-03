@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from apps.models import User, Business, Appointment, Service, BusinessWorker
 from apps.serializers import UserModelSerializer, BusinessModelSerializer, AppointmentModelSerializer, \
     ServiceModelSerializer, CustomTokenObtainPairSerializer, \
-    BusinessWorkerModelSerializer
+    BusinessWorkerModelSerializer, UserUpdateSerializer
 
 
 # Create your views here.
@@ -70,6 +71,14 @@ class GetMe(APIView):
         user = request.user
         serializer = UserModelSerializer(user)
         return Response(serializer.data)
+
+# @extend_schema(tags=['Users'])
+class UserUpdateView(UpdateAPIView):
+    serializer_class = UserUpdateSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

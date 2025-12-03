@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (ModelSerializer, CharField, Serializer,
@@ -158,18 +159,6 @@ class AppointmentStatsSerializer(Serializer):
 
         return data
 
-class TopServicesSerializer(Serializer):
-    service_id = IntegerField()
-    service_name = CharField()
-    total = IntegerField()
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        return {"status_code": status.HTTP_200_OK, "data": data,
-                "message": "Successfully authenticated",
-                }
 class BusinessWorkerModelSerializer(ModelSerializer):
     class Meta:
         model = BusinessWorker
@@ -183,6 +172,78 @@ class BusinessWorkerModelSerializer(ModelSerializer):
             raise ValidationError('Specialist with given id is not found')
         return specialist_id
 
+class TopServicesSerializer(Serializer):
+    service_id = IntegerField()
+    service_name = CharField()
+    total = IntegerField()
+
+class TopClientSerializer(Serializer):
+    client_id = IntegerField()
+    client_name = CharField()
+    total_appointments = IntegerField()
+
+class TopSpecialistSerializer(Serializer):
+    specialist_id = IntegerField()
+    specialist_name = CharField()
+    total_appointments = IntegerField()
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        return {"status_code": status.HTTP_200_OK, "data": data,
+                "message": "Successfully authenticated",
+                }
+
+
+class UserUpdateSerializer(ModelSerializer):
+    new_password = CharField(write_only=True, required=False)
+    confirm_password = CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "avatar",
+            "phone_number",
+            "new_password",
+            "confirm_password",
+        ]
+
+    def validate_phone_number(self, value):
+        pattern = r'^\+?998[0-9]{9}$'
+        if not re.match(pattern, value):
+            raise ValidationError("Phone number must be a valid Uzbekistan number.")
+        return value
+
+    def validate(self, attrs):
+
+        new_password = attrs.get("new_password")
+        confirm_password = attrs.get("confirm_password")
+
+        if new_password or confirm_password:
+            if new_password != confirm_password:
+                raise ValidationError({"password": "Passwords do not match."})
+
+            # validate_password(new_password)
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        new_password = validated_data.pop("new_password", None)
+        validated_data.pop("confirm_password", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if new_password:
+            instance.unhashed_password = new_password
+            instance.set_password(new_password)
+
+        instance.save()
+        return instance
+
 # class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 #     def validate(self, attrs):
 #         data = super().validate(attrs)
@@ -194,13 +255,3 @@ class BusinessWorkerModelSerializer(ModelSerializer):
 #             # "refresh": attrs.get("refresh")
 #         }
 
-
-class TopClientSerializer(Serializer):
-    client_id = IntegerField()
-    client_name = CharField()
-    total_appointments = IntegerField()
-
-class TopSpecialistSerializer(Serializer):
-    specialist_id = IntegerField()
-    specialist_name = CharField()
-    total_appointments = IntegerField()

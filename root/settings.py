@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Third-party
     'django_ckeditor_5',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
