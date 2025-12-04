@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from apps.views.adminViews import (AppointmentViewSet, ServiceViewSet, UserViewSet,
                                    BusinessViewSet,
                                    GetMe, CustomTokenObtainPairView, BusinessWorkerViewSet, UserUpdateView)
+from apps.views.otp_views import RequestPhoneChangeView, VerifyPhoneOTPView
 from apps.views.statisticviews import AppointmentStatisticView, TopServicesView, TopClientsView, TopBusinessesView, \
     TopSpecialistView
 
@@ -24,6 +25,8 @@ urlpatterns = [
     path('get-me/', GetMe.as_view()),
     path('token/', CustomTokenObtainPairView.as_view()),
     path('user-update/', UserUpdateView.as_view()),
+    path('change-phone/', RequestPhoneChangeView.as_view()),
+    path('verify-phone/', VerifyPhoneOTPView.as_view()),
     # path('token/refresh/', CustomTokenRefreshView.as_view()),
 
 ]

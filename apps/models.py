@@ -1,4 +1,6 @@
 import re
+from datetime import  timedelta
+from django.utils import timezone
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
@@ -6,7 +8,7 @@ from django.db.models import ImageField, CASCADE, ForeignKey, JSONField
 from django.db.models import Model
 from django.db.models.enums import TextChoices
 from django.db.models.fields import (CharField, BigIntegerField, BooleanField,
-                                     TimeField, DateField, DecimalField)
+                                     TimeField, DateField, DecimalField, TextField)
 from django.db.models.fields import DateTimeField
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -202,3 +204,22 @@ class TimeOff(CreatedBaseModel):
 
     def __str__(self):
         return f"Time off {self.specialist_id} - {self.date}"
+
+
+class PhoneOTP(Model):
+    user = ForeignKey(User, related_name='phones', on_delete=CASCADE)
+    new_phone_number = TextField(max_length=20)
+    code = CharField(max_length=6)
+    created_at = DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        now = timezone.now()
+        print("Created:", self.created_at)
+        print("Now:     ", now)
+        print("Diff min:", (now - self.created_at).total_seconds() / 60)
+
+        return self.created_at + timedelta(minutes=5) < now
+
+    def can_send_new(self):
+        return self.created_at + timedelta(minutes=2) < timezone.now()
+    

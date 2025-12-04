@@ -244,6 +244,18 @@ class UserUpdateSerializer(ModelSerializer):
         instance.save()
         return instance
 
+class PhoneNumberUpdateSerializer(Serializer):
+    new_phone_number = CharField(max_length=20)
+
+    def validate_new_phone_number(self, value):
+        if User.objects.filter(phone_number=value).exists():
+            raise ValidationError("This phone number is already registered.")
+        return value
+
+class OtpTokenSerializer(Serializer):
+    code = CharField()
+
+
 # class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 #     def validate(self, attrs):
 #         data = super().validate(attrs)
