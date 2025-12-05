@@ -1,6 +1,7 @@
 import re
 
 from django.contrib.auth.password_validation import validate_password
+from django.template.context_processors import request
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (ModelSerializer, CharField, Serializer,
@@ -197,18 +198,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserUpdateSerializer(ModelSerializer):
-    # new_password = CharField(write_only=True, required=False)
-    # confirm_password = CharField(write_only=True, required=False)
-
     class Meta:
         model = User
         fields = [
             "first_name",
             "last_name",
             "avatar",
-            "phone_number",
-            # "new_password",
-            # "confirm_password",
         ]
 
     def validate_phone_number(self, value):
@@ -216,33 +211,6 @@ class UserUpdateSerializer(ModelSerializer):
         if not re.match(pattern, value):
             raise ValidationError("Phone number must be a valid Uzbekistan number.")
         return value
-
-    # def validate(self, attrs):
-    #
-    #     new_password = attrs.get("new_password")
-    #     confirm_password = attrs.get("confirm_password")
-    #
-    #     if new_password or confirm_password:
-    #         if new_password != confirm_password:
-    #             raise ValidationError({"password": "Passwords do not match."})
-    #
-    #         # validate_password(new_password)
-    #
-    #     return attrs
-
-    def update(self, instance, validated_data):
-        new_password = validated_data.pop("new_password", None)
-        validated_data.pop("confirm_password", None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        if new_password:
-            instance.unhashed_password = new_password
-            instance.set_password(new_password)
-
-        instance.save()
-        return instance
 
 class PhoneNumberUpdateSerializer(Serializer):
     new_phone_number = CharField(max_length=20)
@@ -256,7 +224,7 @@ class OtpTokenSerializer(Serializer):
     code = CharField()
 
 
-# class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    # class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 #     def validate(self, attrs):
 #         data = super().validate(attrs)
 #

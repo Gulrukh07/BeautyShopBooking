@@ -1,14 +1,15 @@
-import random
 from datetime import timedelta
 from django.utils import timezone
 
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.models import PhoneOTP
 from apps.serializers import PhoneNumberUpdateSerializer, OtpTokenSerializer
+from utils.otp_service import generate_otp
 
 
 @extend_schema(tags=['Users'], request= PhoneNumberUpdateSerializer)
@@ -42,7 +43,7 @@ class RequestPhoneChangeView(APIView):
 
 
         # generate OTP
-        otp_code = str(random.randint(100000, 999999))
+        otp_code = generate_otp()
 
         PhoneOTP.objects.filter(new_phone_number=new_phone_number).delete()
 
@@ -55,7 +56,7 @@ class RequestPhoneChangeView(APIView):
 
 # return OTP for testing (no SMS service)
         return Response({
-            "message": "Verification code sent. For testing, OTP is included.",
+            "message": "Verification code sent",
             **serializer.data  # return only for staging/testing
         })
 
@@ -92,5 +93,6 @@ class VerifyPhoneOTPView(APIView):
 
         return Response({
             "message": "Phone number updated successfully",
-            "new_phone_number": user.phone_number
+            "new_phone_number": user.phone_number,
+            'status_code': status.HTTP_200_OK
         })
